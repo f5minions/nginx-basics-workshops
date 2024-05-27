@@ -2,13 +2,19 @@
 
 # NGINX Basics Workshop
 
-## Welcome to the NGINX OSS and Plus Basics Workshop
+## NGINX OSS 및 NGINX Plus 101 Workshop에 오신 것을 환영합니다.
 
 <br/>
 
-This Workshop will introduce `NGINX Webserver and Reverse Proxy` with hands-on practice through self-paced lab exercises.
+이번 워크샵에서 우리는 `NGINX 웹서버 및 Reverse Proxy`에 대한 직접 배포를 통한 실습을 위주로 진행을 합니다.
 
-You will learn about `NGINX` Opensource Software (OSS) and `NGINX Plus`, the Commerical version of NGINX, with no prior experience required.  The lab exercises provided will teach you by example how to install, configure, test, operate, troubleshoot, and fix NGINX; using common commands, tools, and applications.  There are dozens of use cases for NGINX, this Basics Workshop will focus on the most common ones for new users and deployments.  This Workshop content is designed to run in almost any environment that can host Docker and Linux containers, for broad appeal and consumption by users.
+워크샵은 사전 경험이 없더라도 NGINX 오픈소스 소프트웨어(OSS) 및 NGINX 상용버전(Plus)에 대해 배우게 되며, 제공된 실습에서는 일반적인 명령, 도구 및 환경에서 NGINX를 설치, 구성, 테스트, 작동, 문제해결 및 수정하는 방법을 예제로 알려줍니다. 
+
+NGINX에는 수십 가지의 사용 사례가 있으며, 이번 워크샵에서는 신규 사용자 및 배포에 대한 가장 일반적인 사례 중심으로 진행을 합니다. 이 워크샵 컨텐츠는 Docker 및 Linux 컨테이너를 호스팅할 수 있는 거의 모든 환경에서 실행되도록 설계되엊 사용자가 폭넓게 사용하거나 활용할 수 있습니다.
+
+NGINX 웹서버를 구성하고, Docker를 사용하여 배포한 NGINX를 웹서버로 사용하고 기본 및 고급 NGINX 기능을 구성하고, 부하 테스트, 실시간 모니터링 등의 방법들을 배우게 됩니다. 새 앱 및 서비스 배포하고, 
+
+
 
 You will learn how to configure NGINX Webserver, deploy it with Docker, configure basic and some advanced NGINX features, loadtest it, and monitor it in realtime. You will deploy new apps and services, terminate SSL, route HTTP traffic, configure redirects, set up healthchecks, and load balance traffic to running servers.  You will add some Security features, follow Best Practices, and become proficient with basic NGINX configurations.  These Hands-On Lab Exercises are designed to be independent, with later labs adding additional services and features as you progress through them. Completing the labs in sequential order is highly recommended.
 
