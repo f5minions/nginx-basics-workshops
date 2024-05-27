@@ -2,39 +2,38 @@
 
 ## 소개
 
-In this Lab, NGINX as a webserver with HTTPS TLS termination will be introduced.  HTTPS is commonly used to secure a website with encryption, so that data sent between the browser and the NGINX server cannot be easily read like clear text HTTP. You will explore common TLS configuration directives and variables, to provide encryption for your traffic.  You will also explore some common tools to create and test TLS encryption components.
-
 이 실습에서는 HTTPS TLS 종료기능(SSL Offload) 기능이 있는 NGINX 웹 서버의 설정에 대해서 알아봅니다. HTTPS는 일반적으로 암호화로 웹 사이트를 보호하는데 사용되므로 브라우저와 NGINX 서버 간의 전송되는 데이터는 HTTP의 일반 텍스트처럼 쉽게 읽을 수 없습니다. 트래픽에 대한 암호화를 제공하기 위해 일반적으로 TLS 구성 지시문 및 변수를 살표 봅니다. 또한 TLS 암호화 구성 요소를 만들고 테스트하기 위한 몇 가지 도구를 살펴 봅니다.
 
 
-## Learning Objectives
+## 학습목표
 
-By the end of the lab you will be able to:
+이 실습을 마치면 아래의 기능에 대한 이해와 설정을 할 수 있습니다:
 
-- Create a Self-signed TLS certificate and key
-- Configure NGINX webserver to use a TLS cert and key
-- Configure TLS settings
-- Add some TLS Best Practice configurations
-- Test and validate TLS traffic components and settings
+- 자체서명 TLS 인증서 및 키 생성
+- TLS 인증서 및 키를 사용하도록 NGINX 웹서버 구성
+- TLS 설정
+- TLS 설정에 대한 모범사례 구성
+- TLS 트래픽 구성요소 및 설정 테스트, 유효성 검사
 
 </br>
 
-## Prerequisites
+## 사전준비사항
 
 <br/>
 
-- You must have Docker installed and running
-- You must have Docker-compose installed
-- See `Lab0` for instructions on setting up your system for this Workshop
-- Familiarity with basic Linux commands and commandline tools
-- Familiarity with basic Docker concepts and commands
-- Familiarity with basic HTTP and HTTPS protocols
+- Docker가 설치되어 실행 중이어야 합니다.
+- Docker-Compose가 설치되어 있어야 합니다.
+- 이 워크샵을 위한 시스템 설정에 대한 지침은 다음을 참조하십시오. `Lab0`
+- 기본 Linux 명령 및 CLI 도구에 대한 지식
+- 기본 Docker 개념 및 명령에 대한 지식
+- 기본 HTTP 및 HTTPS 프로토콜에 대한 지식
 
 <br/>
 
-## Create a TLS Self-signed Certificate and Key
+## 자체서명 TLS 인증서 및 키 생성
 
-In this exercise, you will use `openssl` to create a Self-signed certificate and key to use for these exercises.  However, it should be clearly understood, that Self-signed certificates are exactly that - they are created and signed by you or someone else.  `They are not signed by any official Certificate Authority`, so they are not recommended for any use other than testing in local lab exercises.  Most Modern Internet Browsers will display Security Warnings when they receive a Self-Signed certificate from a webserver.  In some environments, the Browser may actually block access completely.  So use Self-signed certificates with `CAUTION`.
+
+이 실습에서는 `OpenSSL`을 사용하여 실습에 사용할 자체서명 인증서 및 키를 생성 합니다. 자체서명 인증서는 본인 또는 다른 사람이 직접 만들고 서명한 인증서 형태임을 이해하고 실습 목적의 환경 및 테스트 환경에서만 활용하시는 것이 좋습니다. 대부분의 최신 인터넷 브라우저는 웹 서버로부터 자체서명 인증서를 받을 때 보안경고를 표시합니다. 일부 환경에서는 브라우저가 실제로 엑세스를 완전히 차단할 수도 있습니다. 
 
 <br/>
 
@@ -43,6 +42,7 @@ In this exercise, you will use `openssl` to create a Self-signed certificate and
 <br/>
 
 1. Ensure you are in the `lab3` folder.  Using a Terminal, use Docker Compose to build and run the `nginx-oss` container.  This is a new image, based on the Dockerfile in the lab3 folder.  The `openssl` libraries have been added, so you can use them to build, configure, and test TLS.  Optionally, you can use `openssl` if it is installed on your local machine.
+
 
 1. Run Docker Compose to build and run your containers:
 
