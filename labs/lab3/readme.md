@@ -1,8 +1,11 @@
-# NGINX Web Server with TLS
+# NGINX 웹서버에 TLS 적용
 
-## Introduction
+## 소개
 
 In this Lab, NGINX as a webserver with HTTPS TLS termination will be introduced.  HTTPS is commonly used to secure a website with encryption, so that data sent between the browser and the NGINX server cannot be easily read like clear text HTTP. You will explore common TLS configuration directives and variables, to provide encryption for your traffic.  You will also explore some common tools to create and test TLS encryption components.
+
+이 실습에서는 HTTPS TLS 종료기능(SSL Offload) 기능이 있는 NGINX 웹 서버의 설정에 대해서 알아봅니다. HTTPS는 일반적으로 암호화로 웹 사이트를 보호하는데 사용되므로 브라우저와 NGINX 서버 간의 전송되는 데이터는 HTTP의 일반 텍스트처럼 쉽게 읽을 수 없습니다. 트래픽에 대한 암호화를 제공하기 위해 일반적으로 TLS 구성 지시문 및 변수를 살표 봅니다. 또한 TLS 암호화 구성 요소를 만들고 테스트하기 위한 몇 가지 도구를 살펴 봅니다.
+
 
 ## Learning Objectives
 
