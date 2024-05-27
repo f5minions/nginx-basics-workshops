@@ -1,42 +1,46 @@
-# NGINX Reverse Proxy and HTTP Load Balancing
+# NGINX Reverse Proxy 및 HTTP Load Balancing
 
-## Introduction
+## 소개
 
-In this lab, you will build a test lab environment using NGINX and Docker.  This will require that you build and run NGINX Opensource as a `Reverse Proxy Load Balancer` in a Docker container.  Then you will run three NGINX demo web servers, to be used as your `backend` web servers.  After all the containers are running, you will test and verify each container, the NGINX Proxy and the web servers.  All of these NGINX containers will be used as a learning platform to complete the remaining Lab Exercises.  It is important to build and run these NGINX containers correctly to complete the exercises and receive the most benefit from the Workshop.
+
+이 실습에서는 Docker 및 NGINX를 사용하여 테스트 랩 환경을 구축 합니다. NGINX OSS를 Docker 컨테이너에서 빌드하고 실행한 다음 웹 서버로 사용할 3개의 NGINX 데모 웹 서버를 실행 합니다. 모든 컨테이너가 실행된 후 각 컨테이너, NGINX Proxy 및 웹 서버를 테스트하고 확인 합니다. 
+
+이러한 모든 NGINX 컨테이너는 나머지 실습을 완료하기 위한 학습 플랫폼으로 사용되며, NGINX 컨테이너를 올바르게 빌드하고 실행하여 연습을 완료하고 워크샵을 최대한 활용하는 것이 중요 합니다.
 
 NGINX OSS | Docker
 :-------------------------:|:-------------------------:
 ![NGINX OSS](media/nginx-icon.png)  |![Docker](media/docker-icon.png)
   
-## Learning Objectives
+## 학습목표
 
-By the end of the lab you will be able to:
+실습을 마치면 다음을 수행할 수 있습니다:
 
-- Build and run an `NGINX Opensource Docker` image
-- Build your Workshop enviroment with Docker Compose
-- Verify Container build with NGINX tests
-- Configure NGINX Extended Access Logging
-- Configure NGINX for Load Balancing
-- Add NGINX features following Best Practices
+- `NGINX Opensource Docker` 이미지 빌드 및 실행
+- Docker Compose로 워크샵 환경구축
+- NGINX 테스트로 컨테이너 빌드확인
+- NGINX 확장 엑세스 로깅 구성
+- 로드밸런싱 위한 NGINX 구성
+- 모범 사례에 따라 NGINX 기능추가
 
-## Pre-Requisites
+## 전체조건
 
-- You must have Docker installed and running
-- You must have Docker-compose installed
-- See `Lab0` for instructions on setting up your system for this Workshop
-- Familiarity with basic Linux commands and commandline tools
-- Familiarity with basic Docker concepts and commands
-- Familiarity with basic HTTP protocol
+- Docker가 설치되어 실행 중이어야 합니다
+- Docker-Compose가 설치되어 있어야 합니다
+- 이 워크샵을 위한 시스템 설정에 대한 지침은 `Lab0`을 참조하십시오
+- 기본 Linux 명령 및 CLI 도구에 대한 지식
+- 기본 Docker 개념 및 명령에 대한 지식
+- 기본 HTTP 프로토콜에 대한 지식
 
-## Build the Workshop Environment with Docker Compose
+## Docker Compose를 사용하여 워크샵 환경구축
 
-For this lab you will build/run 4 Docker containers.  The first one will be used as an NGINX-OSS reverse proxy, and other 3 will be used for upstream backend web servers.
+
+이 실습에서는 4개의 Docker 컨테이너를 빌드/실행 합니다. 첫번째는 NGINX OSS Reverse Prpoxy로 사용하되고 나머지 3개는 업스트림 백엔드 웹 서버로 사용 됩니다.
 
 ![Lab4 diagram](media/lab4_lab-diagram.png)
 
-### Configure the NGINX-OSS Docker build parameters
+### NGINX OSS Docker 빌드 매개변수 구성
 
-1. Inspect the Dockerfile, located in the `labs/lab4/nginx-oss` folder.  Notice the `FROM` build parameter uses the `NGINX Alpine mainline` image, and also the `RUN apk add` command, which installs additional tool libraries in the image.  These tools are needed for copy/edit of files, and to run various tests while using the container in the exercises.  NOTE: you can choose a different NGINX base image if you like, but these lab exercises are written to use the Alpine image.
+1. `labs/lab4/nginx-oss` 폴더에 있는 Dockerfile을 검사 합니다. build 매개변수는 이미지를 사용하며, 이미지에 추가 도구 라이브러리를 설치하는 명령도 사용 합니다. 이러한 도구는 파일을 복사/편집하고 연습에서 컨테이너를 사용하는 동안 다양한 테스트를 실행하는데 필요 합니다. 참고: 원하는 경우 다른 NGINX 기본 이미지를 선택할 수 있지만 이번 실습은 Alpine 이미지(mainline)를 사용하도록 작성 되었습니다.
 
     ```bash
     FROM nginx:mainline-alpine
@@ -44,7 +48,7 @@ For this lab you will build/run 4 Docker containers.  The first one will be used
 
     ```
 
-1. Inspect the `docker-compose.yml` file, located in the `labs/lab4` folder.  Notice you are building and running the NGINX-OSS web and Proxy container, (using the modified `/nginx-oss/Dockerfile` from the previous step).  
+1. `labs/lab4` 폴더에 있는 `docker-compose.yml` 파일을 검사 합니다. NGINX OSS 웹 및 프록시 컨테이너를 빌드하고 실행하고 있습니다. (이전 단계에서 수정된 항목 `/nginx-oss/Dockerfile` 사용)
 
     ```bash
     ...
@@ -67,7 +71,8 @@ For this lab you will build/run 4 Docker containers.  The first one will be used
 
     ```
 
-    Also notice in the `docker-compose.yml` you are running three Docker NGINX webserver containers, using an image from Docker Hub.  These will be your upstreams, backend webservers for the exercises.
+
+    또한 `docker-compose.yml`의 Docker Hub의 이미지를 사용하여 3개의 Docker NGINX 웹 서버 컨테이너를 실행 합니다. 이 3개의 NGINX 웹 서버는 연습을 위한 업스트림(백엔드 웹 서버)가 될 것 입니다.
 
     ```bash
     ...

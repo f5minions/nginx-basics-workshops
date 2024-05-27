@@ -41,17 +41,18 @@
 
 <br/>
 
-1. Ensure you are in the `lab3` folder.  Using a Terminal, use Docker Compose to build and run the `nginx-oss` container.  This is a new image, based on the Dockerfile in the lab3 folder.  The `openssl` libraries have been added, so you can use them to build, configure, and test TLS.  Optionally, you can use `openssl` if it is installed on your local machine.
+
+1. 현재 `Lab3` 폴더에 있는지 확인 후 진행을 합니다. 터미널을 사용하여 Docker Compose를 빌드하고 실행을 먼저 수행 합니다. 이 이미지는 lab3 폴더의 Dockerfile을 기반으로 하는 새로운 `nginx-oss`이미지 및 컨테이너를 생성 합니다. `openssl`라이브러리가 추가되었으므로 이를 사용하여 TLS를 빌드, 설정 및 테스트 할 수 있습니다. 선택적으로 자신의 개인 환경에서 진행하는 경우 `openssl`을 활용하여 동일한 실습을 진행할 수 있습니다.
 
 
-1. Run Docker Compose to build and run your containers:
+1.  Docker Comspose를 실행하여 컨테이너를 빌드하고 실행함:
 
    ```bash
     cd lab3
     docker compose up --force-recreate -d
    ```
 
-1. After the Docker Compose has completed, and the lab3/nginx-oss container is running, Docker Exec into the nginx-oss container.
+1. Docker-Compose 빌드 및 실행이 완료 후 lab3/nginx-oss 컨테이너가 실행 잊After the Docker Compose has completed, and the lab3/nginx-oss container is running, Docker Exec into the nginx-oss container.
 
     ```bash
     docker exec -it nginx-oss /bin/bash
