@@ -15,10 +15,9 @@ NGINX에는 수십 가지의 사용 사례가 있으며, 이번 워크샵에서�
 NGINX 웹서버를 구성하고, Docker를 사용하여 배포한 NGINX를 웹서버로 사용하고 기본 및 고급 NGINX 기능을 구성하고, 부하 테스트, 실시간 모니터링 등의 방법들을 배우게 됩니다. 새 앱 및 서비스 배포하고, 
 
 
+NGINX 웹 서버를 구성하고, 도커와 함께 배포하고, 기본 및 일부 고급 NGINX 기능을 구성하고, 로드 테스트하고, 실시간으로 모니터링하는 방법을 배우게 된다. 새로운 앱과 서비스를 배포하고, SSL을 종료하고, HTTP 트래픽을 라우팅하고, 리디렉션 구성하고, 상태 점검을 설정하고, 실행 중인 서버에 트래픽을 로드 밸런싱한다. 몇 가지 보안 기능을 추가하고, 모범 사례를 따르며, 기본 NGINX 구성에 능숙해진다. 이러한 Hands-On Lab 연습은 독립적으로 설계되었으며, 나중에 실험실에서 추가 서비스와 기능을 추가한다. 실험실을 순차적으로 완료하는 것이 매우 권장된다.
 
-You will learn how to configure NGINX Webserver, deploy it with Docker, configure basic and some advanced NGINX features, loadtest it, and monitor it in realtime. You will deploy new apps and services, terminate SSL, route HTTP traffic, configure redirects, set up healthchecks, and load balance traffic to running servers.  You will add some Security features, follow Best Practices, and become proficient with basic NGINX configurations.  These Hands-On Lab Exercises are designed to be independent, with later labs adding additional services and features as you progress through them. Completing the labs in sequential order is highly recommended.
-
-By the end of this Workshop, you will have a working, operational NGINX OSS or Plus Docker environment, routing traffic to and from backend web application servers, with the necessary skills to deploy and operate NGINX for your own Modern Applications. Thank You for taking the time to attend this NGINXpert Workshop!
+이 워크숍이 끝날 때까지, 여러분은 백엔드 웹 애플리케이션 서버에서 오가는 트래픽을 라우팅하는 NGINX OSS 또는 Plus Docker 환경을 갖게 될 것이며, 여러분 자신의 최신 애플리케이션을 위해 NGINX를 배포하고 운영하는 데 필요한 기술을 갖추게 될 것입니다. 시간을 내어 NGINXpert 워크숍에 참석해 주셔서 감사합니다!
 
 ![NGINXpert Desk](media/nginx-workshop-desk.png)
 
