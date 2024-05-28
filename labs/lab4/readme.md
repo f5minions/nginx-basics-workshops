@@ -513,9 +513,9 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
 이제 잘 동작하는 NGINX 프록시와 여러 백엔드가 있으므로 추가 NGINX 지시문, 변수를 활용하여 프록시 트래픽에 대한 엑세스 로그에 더 많은 정보를 출력해보도록 하겠습니다. 기본 NGINX `main` 엑세스 log_format에는 필요한 정보의 일부만 포함되어 있으므로 업스트림 백엔드 서버에 대한 더 많은 `extend` 정보를 포함해야 할 수도 있습니다. 
 
 
-1. In this next exercise, you will use a new `log_format` which has additional $variables added the access.log, so you can see this metadata.  You will use the Best Practice of defining the log format ONCE, but potentially use it in many Server blocks.
+1. 이번 실습에서는 추가적인 $variables를 통해 새 메타데이터를 access_log에 설정하여 `log_format`을 정의할 수 있습니다. 
 
-1. Inspect the `main` access log_format that is the default when you install NGINX.  You will find it in the `/etc/nginx/nginx.conf` file.  As you can see, there is `nothing` in this log format about the Upstreams, Headers, or other details you need.
+1. NGINX를 설치할 때 기본값인 `main` 엑세스로 로그 포맷(log_format)를 `/etc/nginx/nginx.conf`을 통해 확인 합니다. 이 로그 형식에는 업스트림, 해더 또는 기타 필요한 세부 정보 등이 없습니다. 
 
     ```nginx
     ...snip from /etc/nginx/nginx.conf
@@ -524,13 +524,13 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"';
 
-                    # nothing above on Upstreams, how do you even know which server handled the request ???
+                    # 어떻게 백엔드 서버가 트래픽을 처리했는가에 대한 업스트림 정보는 없습니다. 
 
     ...
 
     ```
 
-1. Inspect the `main_ext.conf` configuration file, located in the `/etc/nginx/includes/log_formats` folder.  You will see there are many added $variables, some are for the request, some for proxy functions, some for the response, and several are about the Upstream (so you know which backend was chosen and used for a request).  NGINX has `hundreds` of $variables you can use, depending on what you need to see.
+1. `/etc/nginx/includes/log_formats`폴더에 있는 `main_ext.conf` 파일을 열어서 확인 합니다. 많은 추가 $variables가 있음을 확인할 수 있고 일부는 요청용, 일부는 프록시 기능용, 일부는 응답용, 일부는 업스트림에 대한 것이 있습니다.(따라서 어떤 백엔드가 선택되고 사용되었는지 알 수  있습니다) NGINX에는 보고싶은 내용에 따라 사용할 수 있는 다양한 `수백가지의` $variables가 있습니다.
 
     ```nginx
     # Extended Log Format
@@ -556,7 +556,7 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
                             
     ```
 
-1. You will use the Extended log_format for the next few exercises.  Update your `cafe.example.com.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to use the `main_ext` log format:
+1. 다음 몇 가지 실습에서 확장 log_format을 사용해보려고 합니다. 마운트된 폴더(`labs/lab4/nginx-oss/etc/nginx/conf.d`)의 `cafe.example.com.conf`설정 파일을 업데이트하여 `main_ext`로그 형식을 사용합니다.
 
     ```nginx
     # cars.example.com HTTP
@@ -576,15 +576,15 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 설정 파일이 업데이트되고 저장되면 Docker Exec를 통해 nginx-oss로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload` 명령으로 NGINX 구성을 테스트하고 다시 로드 합니다.
 
-1. Test your new log format.  Docker Exec into your nginx-oss container.  Tail the `/var/log/nginx/cafe.example.com.log` access log file, and you will see the new Extended Log Format.
+1. NGINX-OSS 컨테이너로 접속 후 `/var/log/nginx/cafe.example.com.log` 엑세스 로그 파일을 추적하면 새로운 확장 로그 형식 기반의 로그가 표시 됩니다.
 
     ```bash
     docker exec -it nginx-oss bin/bash
@@ -592,9 +592,9 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
 
     ```
 
-1. Watch your new log format.  Using curl or your browser, hit the `cafe.example.com` website a few times.
+1. curl 명령으로 `cafe.example.com`로 몇번 접속 시도 후 확장된 로그의 내용을 확인 합니다.
 
-    It should look something like this (comments and line breaks added for clarity):
+    아래와 같이 표시되어야 합니다(아래 내용은 명확성을 보여주기 위해 주석 및 줄바꿈을 추가함):
 
     ```bash
      ##Sample output##
@@ -622,29 +622,28 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
 
     ```
 
-    As you can see here, NGINX has `many $variables` that you can use, to customize the Access log_format to meet your needs.  You will find a link to NGINX Access Logging, and ALL the NGINX Variables that are availabe in the [References](#references) section below.
-
-    It should also be pointed out, that you can use different log formats for different Hosts, Server Blocks, or even different Location Blocks, you are not limited to just one log_format.
-
-<br/>
-
-### NGINX Proxy Protocol and Keep-alives
+    위와 같이 NGINX에는 필요에 맞게 access log_format을 `many $variables`을 포함하여 사용자 지정으로 사용할 수 있습니다. NGINX 엑세스 로깅에 대한 모든 변수는 [References](#references) 링크를 통해 확인 할 수 있습니다.  
+    또한 다른 호스트, 서버 블록 또는 다른 위치 블록에 대한 다른 로그 형식 또한 사용할 수 있으며 하나의 log_format로 제한되지 않는다는 점도 알고 있어야 합니다.
 
 <br/>
 
-Now that you have Reverse Proxy and load balancing working, you need to think about what information should be passed to and from the backend servers.  After all, if you insert a Proxy in between the client and the server, you might lose some important information in the request or the response.  `NGINX proxy_headers` are used to restore this information, and add additional information as well using NGINX $variables.  Proxy headers are also used to control the HTTP protocol itself, which you will do first.
+### NGINX 프로시프로토콜(ProxyProtocol) 및 연결유지(Keepalive)
 
-In this next exercise, you will define these HTTP Protocol Headers, and then tell NGINX to use them in your `cafe.example.com` Server block, so that every request and response will now include these new headers.  
+<br/>
 
-**NOTE:** When NGINX proxies a request to an Upstream, it uses the HTTP/1.0 protocol by default, for legacy compatibility.  
+여기까지 우리는 Reverse Proxy 및 로드밸런싱이 동작하는 것을 확인하였고 이제는 NGINX와 백엔드 서버간의 주고 받아야 하는 정보에 대해 한번 살펴보도록 하겠습니다. 결국 클라이언트와 서버 사이에 프록시를 삽입하면 요청 또는 응답에서 중요한 정보가 손실될 수 있습니다. 이러한 정보를 `NGINX proxy_headers`를 사용하여 복원하고 추가 정보를 삽입하는데 활용할 수 있습니다. 프록시 해더는 HTTP 프로토콜 자체를 제어하는데도 사용될 수 있습니다.
 
-However, this means a new TCP connection for every request, and is quite inefficient.  Modern apps mostly run HTTP/1.1, so you will tell NGINX to use HTTP/1.1 for Proxied requests, which allows NGINX to re-use TCP connections for multiple requests.  (This is commonly called HTTP keepalives, or HTTP pipelining).
+이번 실습에서는 이러한 HTTP 프로토콜 해더를 정의한 다음 NGINX에서 `cafe.example.com`의 서버 블록에서 사용하도록 지시하여 모든 요청 및 응답에 새롭게 정의한 해더가 포함되도록 합니다.   
 
-1. Inspect the `keepalive.conf`, located in the `labs/lab4/nginx-oss/etc/nginx/includes` folder.  Notice that there are three Directives and Headers required for HTTP/1.1 to work correctly:
+**메모:** NGINX는 업스트림에 요청을 프록시할 때 레거시 호환성을 위해 기본적으로 HTTP/1.0 프로토콜을 사용합니다.  
 
-    - HTTP Protocol = Use the `$proxy_protocol_version` variable to set it to `1.1`.
-    - HTTP Connection Header = should be blank, `""`, the default is `Close`.
-    - HTTP Host = the HTTP/1.1 protocol requires a Host Header be set, `$host`
+기본 설정인 HTTP/1.0 프로토콜은 모든 요청에 대해 새로운 TCP 연결을 생성하여 사용하기 때문에 매우 비효율적 입니다. 최신의 앱들은 대부분 HTTP/1.1을 지원하기 때문에 NGINX 프록시 요청에 HTTP/1.1을 사용하도록 지시하여 NGINX가 여러 요청에 TCP 연결을 재사용할 수 있도록 합니다. 이는 일반적으로 HTTP Keepalive 또는 HTTP Pipelining 이라고 합니다.
+
+1. `labs/lab4/nginx-oss/etc/nginx/includes` 폴더에 `keepalive.conf` 파일의 설정을 확인 합니다. HTTP/1.1이 올바르게 동작하는데 필요한 3가지 지시문과 해더가 있습니다.
+
+    - HTTP Protocol =  `$proxy_protocol_version`변수를 사용하여 1.1로 설정 합니다.
+    - HTTP Connection Header = 공백으로 둡니다, `""`, 기본값은 `Close`이고 요청 후 연결을 종료하는 설정 입니다.
+    - HTTP Host = HTTP/1.1 protocol은 `$host` Host 해더를 설정해야 합니다.
 
     ```nginx
     #Nginx Basics - Feb 2024
@@ -661,7 +660,7 @@ However, this means a new TCP connection for every request, and is quite ineffic
 
     ```
 
-1. Update your `cafe.example.com.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to use the HTTP/1.1 protocol to communicate with the Upstreams. You will make use of an `include` directive here:
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더의 `cafe.example.com.conf`파일의 설정에서 업스트림 서버와 통신에서 HTTP/1.1 프로토콜을 사용하도록 `include` 지시문을 사용하여 업데이트 합니다.
 
     ```nginx
     # cafe.example.com HTTP
@@ -691,15 +690,15 @@ However, this means a new TCP connection for every request, and is quite ineffic
     } 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용이 수정되고 업데이트되면 Docker Exec를 통해 nginx-oss 컨테이너로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. 컨테이너 내에서 `nginx -t` 및 `nginx -s reload` 명령으로 설정을 검사하고 다시 로드 합니다.
 
-1. Using curl, send a request to your website, and look at the Headers sent back:
+1. curl 명령을 사용하여 웹 사이트에 요청을 보내고 다시 전송된 해더를 확인 합니다.
 
     ```bash
     # Run curl from outside of container
@@ -719,13 +718,13 @@ However, this means a new TCP connection for every request, and is quite ineffic
 
     ```
 
-1. Using your browser, open its "Dev Tools", or "Inspect" option, so you can see the browser's debugging metadata.  Visit your website, <http://cafe.example.com>.  If you click on the Network Tab, and then the first object, you will see the Request and Response Headers, and should find that `Connection:` = `keep-alive`
+1. 그리고 브라우저를 사용해서 "개발자도구" 또는 "Inspect" 옵션을 열어 브라우저의 디버깅 메타데이터를  볼 수 있습니다. <http://cafe.example.com> 웹사이트를 방문하고 개발자 도구의 네트워크 탭을 클릭한 다음 첫번째 개체를 클릭하면 Request 및 Response 해더가 표시되며 `Connection:` = `keep-alive` 내용을 확인할 수 있습니다.
 
     ![Chrome keep-alive](media/lab4_chrome-keepalive.png)
 
 <br/>
 
-### NGINX Custom Request Headers
+### NGINX 사용자지정 요청해더
 
 <br/>
 
