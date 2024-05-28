@@ -97,14 +97,14 @@ NGINX OSS | Docker
 
     ```
 
-1. Ensure you are in the `lab4` folder.  Using a Terminal, run Docker Compose to build and run your containers:
+1. `lab4` 폴더에 있는지 확인 후 작업을 진행 합니다. 터미널을 사용하여 Docker Compose를 실행하여 컨테이너를 빌드하고 실행 합니다.
 
    ```bash
     cd lab4
     docker compose up --force-recreate -d
    ```
 
-1. Verify all four containers are running:
+1. 아래와 같이 4개의 컨테이너가 정상적으로 실행 중인지 확인 합니다.
 
     ```bash
     docker ps -a
@@ -121,7 +121,7 @@ NGINX OSS | Docker
 
     ```
 
-1. Verify `all` of your three web backend servers are working.  Using a Terminal, Docker exec into each one, and verify you get a response to a curl request.  The `Name` should be `web1`, `web2`, and `web3` respectively for each container.
+1. 3개의 웹 서버가 모두 정상 동작하고 있는지 확인 합니다. 터미널을 사용하여 `web1`, `web2`, 그리고 `web3` 각 컨테이너가 모두 curl 요청에 대한 응답을 받는지 확인 합니다.
 
     ```bash
     docker exec -it web1 bin/sh   # log into web1 container, then web2, then web3
@@ -134,7 +134,7 @@ NGINX OSS | Docker
     ```
 
     ```bash
-    ##Sample outputs##
+    ##결과예시##
 
     <p class="smaller"><span>Server Name:</span> <span>web1</span></p>   # web1
 
@@ -144,9 +144,9 @@ NGINX OSS | Docker
 
     ```
 
-    Check all three, just to be sure.  Exit the Docker Exec when you are finished by typing in `exit` within the container terminal.
+    확실하게 하가위해 3대의 웹 서버 모두 확인을 진행 합니다. 컨테이너 터미널 내에서 확인 후 완료되면 `exit`를 입력하여 Docker Exec를 종료 합니다. 
 
-1. Test the NGINX OSS container, verify it also sends back a response to a curl request:
+1. 그리고 NGINX OSS 컨테이너도 동일하게 curl 요청에 대한 응답을 제공하는지 확인 합니다. 
 
     ```bash
     docker exec -it nginx-oss bin/sh   # log into nginx-oss container
@@ -159,7 +159,7 @@ NGINX OSS | Docker
     ```
 
     ```bash
-    ##Sample outputs##
+    ##결과예시##
    <!DOCTYPE html>
     <html>
     <head>
@@ -173,23 +173,22 @@ NGINX OSS | Docker
 
     ```
 
-    Congrats - you should see the `Welcome to nginx!` page. Exit the Docker Exec when you are finished by typing in `exit` within the container terminal.
+    축하합니다! - `Welcome to nginx!` 페이지가 보이면 정상적으로 확인이 된 것 입니다. `exit`를 입력하여 Docker Exec를 종료 합니다. 
 
 <br/>
 
-### NGINX Status Page
-
+### NGINX Status 페이지
 <br/>
 
-NGINX also includes a status page, which shows some basic metrics about the traffic going through NGINX, such as:
+NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 몇 가지 기본 메트릭을 보여주는 상태 페이지도 포함되어 있습니다. 
     - Active Connections
     - Connections Accepted, Handled
     - Total number of Requests
     - Reading, writing, and waiting counters.
 
-These are helpful when looking at if/how NGINX is handling traffic.
+이 상태 페이지는 NGINX가 트래픽을 정상적으로 처리하고 있는가를 확인할 때 유용 합니다. 
 
-1. Inspect the `stub_status.conf` file located in the `/etc/nginx/conf.d` folder.  You will see that it is listening on port 9000, and using the URL of `/basic_status`.  This has been provided for you to monitor your traffic, there is a link in the [References](#references) section with more information on the `stub_status module`.
+1. `/etc/nginx/conf.d`폴더에 있는 `stub_status.conf` 설정 파일을 확인 합니다.  이 설정 파일에서 우리는 NGINX가 9000 포트에서 수신 대기 중이고 `/basic_status` URL을 사용하는 것을 알 수 있습니다. 이는 트래픽을 모니터링하기 위해 제공되었으며, [References] 섹션에서 `stub_status module`에 대한 자세한 정보가 포함된 링크가 있습니다.
 
     ```nginx
     # ngx_http_stub_status_module (available in NGINX OSS)
@@ -210,7 +209,7 @@ These are helpful when looking at if/how NGINX is handling traffic.
 
     ```
 
-1. Give that a try, test access to the NGINX `stub_status` page, on port 9000:
+1. TCP 포트 9000번 포트를 통해 NGINX `stub_status` 페이지를 확인해보세요:
 
     ```bash
     curl http://localhost:9000/basic_status
@@ -226,7 +225,7 @@ These are helpful when looking at if/how NGINX is handling traffic.
 
     ```
 
-1. Try it in a browser at <http://localhost:9000/basic_status>. It should looks similar to this:
+1. 그리고 브라우저를 통해서도 <http://localhost:9000/basic_status>를 함께 확인해보세요. 이는 아래와 같은 결과를 확인할 수 있습니다
 
     ![NGINX Status](media/lab4_nginx-status.png)
 
@@ -236,23 +235,24 @@ These are helpful when looking at if/how NGINX is handling traffic.
 
 <br/>
 
-Now that you know all 4 containers are working with the NGINX Welcome page, and the basic_status page, you can build and test the **NGINX OSS Proxy and Load Balancing** functions.  You will use a new NGINX `proxy_pass` Directive. You will start with Reverse Proxy configuration, test it out then add the Upstream backends and test out Load Balancing.
+이제 NGINX Welcome 페이지 및 basic_status 페이지를 포함한 4개의 컨테이너가 모두 정상적으로 동작하는 것을 확인하였으므로 **NGINX OSS 프록시 및 로드밸런싱 기능**을 빌드라고 테스트 할 수 있습니다. `proxy_pass`라는 새로운 NGINX 지시문을 사용해볼 차례 입니다. Reverse Proxy 구성으로 시작하여 테스트한 다음 업스트림 백엔드를 추가고 3대의 웹 서버로 부하 분산을 테스트 합니다. 
 
-Using your previous lab exercise experience, you will configure a new NGINX configuration for the `cafe.example.com` website.  It will be very similar to `cars.example.com.conf` from lab3.  
 
-This will require a new NGINX config file, for the Server and Location Blocks. Follow below steps to create the new config file:
+이전 실습 환경을 사용하고 `cafe.example.com` 웹 사이트에 대한 새 NGINX 구성을 설정 합니다. Lab3의 `cars.example.com.conf`의 설정과 매우 유사합니다.  
 
-1. Navigate to the `labs/lab4/nginx-oss/etc/nginx/conf.d` folder. Remember, this is the default folder for NGINX HTTP configuration files that is volume mounted to the container.
+이를 위해서는 서버블록(server) 및 위치블록(location)에 대한 새 NGINX 구성 파일이 필요 합니다. 아래 단계에 따라 새 구성 파일을 만듭니다. 
 
-1. Within this folder, create a new file called `cafe.example.com.conf`, which will be the config file for the Server and Location blocks for this new website.  
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d`폴더로 이동. 이 폴더는 컨테이너에 볼륨이 탑재된 NGINX HTTP 구성 파일의 기본 폴더 입니다. 
 
-    However, instead of a Location block that points to a folder with html content on disk, you will tell NGINX to `proxy_pass` the request to one of your three web containers instead.  
+1. 이 폴더에서, `cafe.example.com.conf`라는 새 파일을 생성 합니다. 이 파일은 새 웹 사이트의 서버블록 및 위치블록에 대한 구성 파일이 됩니다.  
 
-    >This will show you how to unlock the amazing power of NGINX...
-    >>it can serve it's own content,
-    >>> or **content from another web server!**
+    그러나 디스크에 HTML 컨텐츠가 있는 폴더를 가르키는 Location 블록 대신 `proxy_pass`를 통해 NGINX에 3개의 웹 컨테이너 중 하나에 대한 요청을 지시 합니다.   
 
-1. Type in the below commands within `cafe.example.com.conf` file. You don't need to type the comments. Don't just copy/paste these lines, type them by hand so you learn.
+    >이제 NGINX의 놀라운 힘을 잠금해제하는 방법을 보여줄 것 입니다...
+    >>자체 컨텐츠를 제공하거나,
+    >>> 또는 **다른 웹 서버의 컨텐츠를 제공할 수도 있습니다!**
+
+1. Type in the below commands within `cafe.example.com.conf`파일 내에서 아래의 명령을 입력 합니다. 아래 예시 줄을 복사/붙여넣기 하지 마시고 손으로 직접 입력하여 방법을 학습하시기 바랍니다.
 
     ```nginx
     # cafe.example.com HTTP
@@ -279,17 +279,17 @@ This will require a new NGINX config file, for the Server and Location Blocks. F
     
     ```
 
-1. Once the content of the file has been saved, Docker Exec into the nginx-oss container.
+1. 파일을 생성한 후 Docker Exec를 통해 nginx-oss 컨테이너에 저장 합니다. 
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. As the `labs/lab4/nginx-oss/etc/nginx/conf.d` folder is volume mounted to the `nginx-oss` container, the new file that you created should appear within the container under `/etc/nginx/conf.d` folder.
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더는 `nginx-oss` 컨테이너의 볼륨으로 마운트되어 있기 때문에 해당 폴더에 새로운 파일이 생성되면 자동으로 nginx-oss 컨테이너의 `/etc/nginx/conf.d` 폴더에도 나타나야 합니다.
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. 컨테이너 내에서 `nginx -t` 그리고 `nginx -s reload` 명령을 각각 실행하여 NGINX 설정을 테스트하고 다시 로드 합니다.
 
-1. Test if your Proxy_pass configuration is working, using curl several times, and your browser.
+1. curl 명령을 여러 번 실행하여 Proxy_Pass가 정상적으로 동작하는지 테스트하고 브라우저를 통해서도 테스트를 진행 합니다. 
 
     ```bash
     # Run curl from outside of container
@@ -297,7 +297,7 @@ This will require a new NGINX config file, for the Server and Location Blocks. F
     ```
 
     ```bash
-     ##Sample outputs##
+     ##결과예시##
       
      #Run 1
       Server: nginx/1.25.4
@@ -316,13 +316,13 @@ This will require a new NGINX config file, for the Server and Location Blocks. F
 
     ```
 
-    Likewise, your browser refreshes should show you the "Out of stock" graphic and webpage for web1.  If you like, change the `proxy_pass` to `web2` or `web3`, and see what happens.
+    마찬가지로 브라우저에서도 새로고침을 web1 서버의 "품절(out of stock)"결과가 표시되어야 합니다. 원하는 경우 `proxy_pass`를 `web2` 또는 `web3`로 변경하고 어떤 일이 발생하는가를 확인 합니다.
 
-    >This is called a `Direct proxy_pass`, where you are telling NGINX to Proxy the request to another server.  You can also use a FQDN name, or an IP:port with proxy_pass.  In this lab environment, Docker is providing the IP for web1.
+    >이 설정은 `Direct proxy_pass`라고 하며, NGINX에 받은 요청을 다른 서버로 프록시하도록 지시 합니다. FQDN 이름 또는 proxy_pass와 함께 IP:PORT를 사용할 수도 있습니다. 이 실습 환경에서 Docker는 web1에 대한 IP를 제공합니다.
 
-1. You can even use proxy_pass in front of a public website.  Try that, with `nginx.org`. What do you think, can you use a Docker container on your desktop to deliver someone else's website?  No, that `can't` be that easy, can it ?
+1. 공용 웹 사이트 앞단에서 proxy_pass를 사용할 수도 있습니다. 세부 내용은 `nginx.org`를 통해 더 많은 정보를 확인할 수 있습니다. 데스크탑에서 Docker 컨테이너를 사용하여 다른 사람의 웹 사이트 또는 다른 웹 사이트로 쉽게 전환하는 것이 쉬울까요? 아니요! 그렇게 쉬울 수 없을 겁니다. 하지만 NGINX의 proxy_pass를 사용하면 쉽게 만들 수 있습니다. 
 
-1. Update the file `cafe.example.com.conf` within the same mounted folder(`labs/lab4/nginx-oss/etc/nginx/conf.d`) and change the `proxy_pass` directive as shown in below config snippet:
+1. 동일한 폴더(`labs/lab4/nginx-oss/etc/nginx/conf.d`)내에 있는 `cafe.example.com.conf`을 업데이트하고 아래 구성 스니펫과 같이 지시문을 변경하십시오. 
 
     ```nginx
     # cafe.example.com HTTP
@@ -349,32 +349,36 @@ This will require a new NGINX config file, for the Server and Location Blocks. F
     
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용이 업데이트되고 저장되면 Docker Exec를 nginx-org 컨테이너에 넣습니다(이 부분은 로컬 볼륨을 사용하기 때문에 자동으로 업데이트가 됩니다. 이 랩에서는 별도로 업데이트할 필요가 없습니다).
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. 컨테이너 내에서 각각 `nginx -t` 및 `nginx -s reload` 명령을 실행하여 NGINX 구성을 테스트하고 다시 로드 합니다. 
+```bash
+    nginx -t; nginx -s reload
+```
 
-1. Try it with Chrome, <http://cafe.example.com>.  Yes, that works alright, NGINX sends your cafe.example.com request to `nginx.org`.  No WAY, that's cool.
+1. 이제 브라우저를 열고 <http://cafe.example.com>를 입력 후 결과를 확인 합니다. NGINX는 사용자의 요청을 아주 쉽게 nginx.org로 proxy하는 것을 직접 확인할 수 있습니다. 어때요? 굉장하지 않나요??
 
     ![Proxy_pass NGINX.org](media/lab4_proxypass-nginx-org.png)
 
 <br/>
 
-### NGINX Load Balancing
+### NGINX 로드밸런싱
 
 <br/>
 
-You see the `proxy_pass` working for one backend webserver, but what about the other 2 backends?  Do you need high availability, and increased capacity for your website? Of course, you want to use multiple backends for this, and load balance them.  This is very easy, as it requires only 2 configuration changes:
+이전 랩에서 `proxy_pass`를 통해 하나의 백엔드 웹 서버에 대해서 동작하는 것을 볼 수 있었지만 다른 2개의 백엔드는 어떻게 추가할 수 있을까요? 웹 사이트에 대한 고가용성 및 증가된 용량이 필요하십니까? 이를 위해 여러 백엔드를 사용하고 로드밸런싱을 설정하려고 합니다. 간단하게 2가지 구성 변경만하면 매우 쉽게 바로 적용을 할 수 있습니다.
 
-- Create a new .conf file for the Upstream Block
-- Modify the proxy_pass to use the name of this upstream block
+- 업스트립 블록 설정을 위한 새로운 .conf 파일의 생성
+- 정의된 업스트림 블록을 사용하도록 proxy_pass를 수정
 
-You will now configure the `NGINX Upstream Block`, which is a `list of backend servers` that can be used by NGINX Proxy for load balancing requests.
+시작해볼까요?<br>
+이제 NGINX 프록시에서 `NGINX Upstream Block`을 에 `backend 서버들을 설정`하여 로드밸런싱 요청을 사용할 수 있도록 구성 합니다. 
 
-1. Within the mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`), create a new file called `upstreams.conf`, which will be the config file for the Upstream Block with three backends - web1, web2, and web3. Type in the below commands within the new file.
+1. 마운트된 폴더(`labs/lab4/nginx-oss/etc/nginx/conf.d`)에 web1, web2 및 web3의 세가지 백엔드가 있는 업스트림 블록의 구성 파일이 될 `upstream.conf` 이름의 새 설정 파일을 생성 합니다. 새 파일에 아래의 설정을 동일하게 입력 합니다.
 
     ```nginx
     # NGINX Basics, OSS Proxy to three upstream NGINX containers
@@ -408,9 +412,9 @@ You will now configure the `NGINX Upstream Block`, which is a `list of backend s
 
     ```
 
-1. Save the `upstreams.conf` file with above content.
+1. `upstreams.conf`이름으로 파일을 저장 합니다.
 
-1. Modify the `proxy_pass` directive in `cafe.example.com.conf`, to proxy the requests to the `upstream` block called `nginx_cafe`.  And it goes without saying, you can have literally hundreds of upstream blocks for various backend apps, but each upstream block name must be unique.  (And you can have hundreds of backends, if you need that much capacity for your website).
+1. `cafe.example.com.conf`파일의 `proxy_pass` 지시문을 수정하여 `nginx_cafe`에 호출된 블록에 대한 요청을 프록시 합니다. 다양한 백엔드에 대한 수백, 수천개의 업스트림 블록을 가질 수 있지만 블록 이름은 고유해야 합니다. 
 
     ```nginx
     # cafe.example.com HTTP
@@ -440,15 +444,15 @@ You will now configure the `NGINX Upstream Block`, which is a `list of backend s
     
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 해당 설정으로 파일을 업데이트 후 Docker Exec를 통해 해당 NGINX 컨테이너에 접속 합니다. 
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload`명령을 통해 NGINX 설정에 대한 검사와 리로드를 수행 합니다.  
 
-1. Verify that, with updated configs, `cafe.example.com` is load balancing to `all three containers`, run the curl command at least 3 times:
+1. `cafe.example.com`가 설정된 업스트림 블록으로 정상적인 로드밸런싱이 수행하는가를 확인 합니다. 정상적으로 동작하면 설정된 3대의 웹 서버로 로드밸런싱이 되는 것을 확인할 수 있습니다. 
 
     ```bash
     # Run curl from outside of container
@@ -476,21 +480,21 @@ You will now configure the `NGINX Upstream Block`, which is a `list of backend s
 
     ```
 
-    You should see `Server Names` like `web1`, `web2`, and `web3` as NGINX load balances all three backends - your NGINX-OSS is now a Reverse Proxy, and load balancing traffic to 3 web containers! Notice the `Server Address`, with the IP address of each upstream container.  Note:  Your IP addresses will likely be different.
+    결과를 통해 우리는 `Server Names`에 `web1`, `web2`, 그리고 `web3` 3개의 웹 컨테이너가 모두 NGINX를 통해 로드밸런싱되어 로드밸런싱 및 Reverse Proxy하는 것을 확인할 수 있습니다. 각 업스트림 컨테이너의 IP 주소 및 이름을 확인하면 됩니다. 참고: IP 주소는 환경에 따라 다를 수 있습니다.
 
-1. Test again, this time using a browser, click `Refresh` at least 3 times:
+1. 이제 브라우저를 이용하여 동일한 URL에 대한 확인을 진행 합니다. 3번 이상 `Refresh`하여 결과를 확인하면 됩니다. 
 
-    Using your browser, go to http://cafe.example.com
+    브라우저를 통해 http://cafe.example.com 주소로 이동합니다.
 
-    You should see the `Out of Stock` web page, note the `Server Name` and `Server Addresses`.
+    우리는 `Out of Stock` 웹 페이지 및 `Server Name` 및 `Server Addresses`를 각각 확인할 수 있습니다.
 
     NGINX Web1 | NGINX Web2 | NGINX Web3 
     :-------------------------:|:-------------------------:|:-------------------------:
     ![NGINX Web1](media/lab4_nginx-web1.png)  |![NGINX Web2](media/lab4_nginx-web2.png) |![NGINX Web3](media/lab4_nginx-web3.png)
 
->This is called an `Upstream proxy_pass`, where you are telling NGINX to Proxy the request to a list of servers in the upstream, and load balance them.
+>우리는 이 설정을 `Upstream proxy_pass`라고하며, 여기서 NGINX에 업스트림의 서버 목록에 대한 요청을 프록시하고 로드밸런싱하도록 지시 합니다.
 
-1. These backend application do have the following multiple paths which can also be used for testing. Feel free to try them out:
+1. 현재 실습 환경의 백엔드는 `/`경로 외 아래와 같은 다양한 페이지가 설정되어 있기 때문에 자유롭게 확인할 수 있습니다:
    - [http://cafe.example.com/coffee](http://cafe.example.com/coffee)
    - [http://cafe.example.com/tea](http://cafe.example.com/tea)
    - [http://cafe.example.com/icetea](http://cafe.example.com/icetea)
@@ -502,11 +506,12 @@ You will now configure the `NGINX Upstream Block`, which is a `list of backend s
 
 <br/>
 
-### NGINX Extended Access Logging
+### NGINX 확장 엑세스 로깅
 
 <br/>
 
-Now that you have a working NGINX Proxy, and several backends, you will be adding and using additional NGINX Directives, Variables, and testing them out.  In order to better see the results of these new Directives on your proxied traffic, you need better and more information in your Access logs.  The default NGINX `main` access log_format only contains a fraction of the information you need, so you will  `extend` it to include much more information, especially about the Upstream backend servers.
+이제 잘 동작하는 NGINX 프록시와 여러 백엔드가 있으므로 추가 NGINX 지시문, 변수를 활용하여 프록시 트래픽에 대한 엑세스 로그에 더 많은 정보를 출력해보도록 하겠습니다. 기본 NGINX `main` 엑세스 log_format에는 필요한 정보의 일부만 포함되어 있으므로 업스트림 백엔드 서버에 대한 더 많은 `extend` 정보를 포함해야 할 수도 있습니다. 
+
 
 1. In this next exercise, you will use a new `log_format` which has additional $variables added the access.log, so you can see this metadata.  You will use the Best Practice of defining the log format ONCE, but potentially use it in many Server blocks.
 
