@@ -728,9 +728,9 @@ NGINX에서 다음과 같이 NGINX를 통해 처리되는 트래픽에 대한 �
 
 <br/>
 
-Now you need to enable some HTTP Headers, to be added to the Request.  These are often need to relay information between the HTTP client and the backend server. These Headers are in addition to the HTTP Protocol control headers.
+다음으로 많이 필요한 사례로 일부 HTTP 해더 정보를 HTTP 클라이언트와 백엔드 서버에 릴레이하는 것이 필요 합니다. 이러한 해더는 HTTP 프로토콜 해더에 추가되어 사용 됩니다.
 
-1. Inspect the `proxy_headers.conf` in the `labs/lab4/nginx-oss/etc/nginx/includes` folder.  You will see that some custom HTTP Headers are being added.
+1. `labs/lab4/nginx-oss/etc/nginx/includes`폴더의 `proxy_headers.conf` 파일의 내용을 먼저 살펴 봅니다. 사용자 지정 해더가 정의되고 활용되는 내용을 확인할 수 있습니다.
 
     ```nginx
     #Nginx Basics - Feb 2024
@@ -749,7 +749,7 @@ Now you need to enable some HTTP Headers, to be added to the Request.  These are
 
     ```
 
-1. Update your `cafe.example.com.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to use the `proxy_headers.conf` added to the config using an `include` directive:
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더의 `cafe.example.com.conf`파일을 `include`지시문을 사용하여 `proxy_headers.conf` 설정을 추가 합니다.
 
     ```nginx
     # cafe.example.com HTTP
@@ -781,25 +781,26 @@ Now you need to enable some HTTP Headers, to be added to the Request.  These are
     } 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용이 수정되고 업데이트되면 Docker Exec로 nginx-oss 컨테이너로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload` 명령으로 NGINX 설정을 검사 및 다시 로드 합니다.
 
 <br/>
 
-### NGINX Load Balancing Algorithms and Load Testing
+### NGINX 로드밸런싱 알고리즘 및 로드테스트
 
 <br/>
 
-Different backend applications may benefit from using different load balancing techniques.  NGINX support both legacy and more modern algorithms for different use cases.  You will configure and test several of these algorithms, put them under a Loadtest, and observe the results.  Then you will add/change some Directives to improve performance, and Loadtest again and see if it made any difference.
+서로 다른 성능 또는 특징을 가지는 백엔드 서버(애플리케이션)은 상황에 맞는 부하분산 기술을 사용하는 것이 도움이 될 수 있습니다. NGINX는 다양한 사용 사례에 대해 레거시 알고리즘과 최신 알고리즘 모두 지원하고 있습니다. 이러한 알고리즘 중 몇 가지를 구성 및 테스트하고 부하 테스트를 수행하고 결과를 확인 합니다. 그리고 성능 향상을 위해 일부 지시문을 추가/수정 후 로드테스트를 다시 수행하여 차이가 있는지도 확인을 합니다.
 
-1. NGINX's default Load Balancing algorithm is round-robin.  In this next lab exercise, you will use the `least connections` algorithm to send more traffic to different backends based on their active TCP connection counts.  
 
-1. Update your `upstreams.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to enable Least Connections, as follows:
+1. NGINX의 기본 부하분산 알고리즘은 "Round Robin" 입니다. 이번 실습 랩에서는 `least connections` 알고리즘을 사용하여 활성 TCP 연결 수를 기반으로 다른 백엔드 트래픽을 더 많이 전송하는 내용을 확인 합니다. 
+
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더의 `upstreams.conf` 파일을 다음과 같이 수정합니다.
 
     ```nginx
 
@@ -830,25 +831,25 @@ Different backend applications may benefit from using different load balancing t
 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용을 업데이트 후 Docker Exec로 nginx-oss 컨테이너로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload` 명령을 통해 업데이트 된 내용을 검사 및 다시 로드하여 반영 합니다. 
 
-1. If you open the NGINX Basic Status page at <http://localhost:9000/basic_status>, and refresh it every 3-4 seconds while you run the `wrk` load generation tool at your nginx-oss Load Balancer:  
+1. `wrk` 부하 테스트 툴을 실행시키는 동안 NGINX의 기본 통계정보 <http://localhost:9000/basic_status> 페이지를 열어서 3~4초 간격으로 새로고침하여 업데이트 상황을 확인 합니다.  
 
-    `wrk` load generation tool is a docker container that will download and run, with 4 threads, at 200 connections, for 1 minute:
+    `wrk`라는 부하테스트 툴은 1분동안 4개의 쓰레드로 200개의 연결을 수행하는 Docker 컨테이너 입니다.
 
     ```bash
     docker run --name wrk --network=lab4_default --rm williamyeh/wrk -t4 -c200 -d1m -H 'Host: cafe.example.com' --timeout 2s http://nginx-oss/coffee
     ```
 
-    In the `basic_status` page, you should notice about 200 Active Connections, and the number of `server requests` should be increasing rapidly.  Unfortunately, there is no easy way to monitor the number of TCP connections to Upstreams when using NGINX Opensource.  But good news, you `will` see all the Upstream metrics in the next lab with NGINX Plus!
+    `basic_status`페이지에서, 약 200개의 활성 TCP 연결을 확인할 수 있으며 `server requests` 연결 수가 빠르게 증가해야 합니다. 불행히도 NGINX OSS를 사용할 떄 업스트림에 대한 TCP 연결 수를 모니터링할 수 있는 방법은 없습니다. 그러나 좋은 소식은 NGINX Plus를 사용하여 다음 실습에서 모든 업스트림 메트릭을 볼 수 있다는 것 입니다. 
 
-    After the 1 minute run of `wrk` load generation tool has finished, you should see a Summary of the statistics.  It should look similar to this:
+    부하생성 툴인 `wrk`가 1분 실행이 완료되면 아래의 내용과 같이 툴의 실행 결과에 대한 통계 요약이 표시되어야 합니다.
 
     ```bash
     ##Sample output##
@@ -863,9 +864,9 @@ Different backend applications may benefit from using different load balancing t
 
     ```
 
-    Well, that performance looks pretty good, about ~2900 HTTP Reqs/second.  But NGINX can do better.  You will enable TCP keepalives to the Upstreams.  This Directive will tell NGINX to create a `pool of TCP connections to each Upstream`, and use that established connection pool to rapid-fire HTTP requests to the backends.  `No delays waiting for the TCP handshakes!`  It is considered a Best Practice to enable keepalives to the Upstream servers.
+    음... 성능은 ~2900 HTTP Reqs/sec로 꽤 좋아 보입니다. 그러나 NGINX는 더 많은 요청을 처리할 수 있습니다. 업스트림에 대한 TCP Keepalive를 사용하도록 설정 합니다. 이 지시문은 NGINX에 `설정된 연결 풀을 사용하여 백엔드에 대한 HTTP 요청`을 `TCP 연결 지연 없이` 신속하게 실행할 수 있도록 합니다. 그리고 업스트림 서버에 대한 Keepalive를 활성화하는 것이 모범 사례가 될 수 있습니다. 
 
-1. Update your `upstreams.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) and uncomment from the `keepalives 16` line.
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더 내 `upstreams.conf` 파일에서 `keepalives 16` 라인의 주석을 제거하여 설정을 반영 합니다.
 
     ```nginx
     ...snip
@@ -888,17 +889,17 @@ Different backend applications may benefit from using different load balancing t
 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용이 수정되고 업데이트되면 Docker Exec로 nginx-oss 컨테이너로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload` 명령을 수행하여 설정을 검증하고 NGINX를 다시 로드 합니다. 
 
-1. Run the `wrk` load generator again. You should now have `least_conn` and `keepalive` both **enabled**.
+1. `least_conn` 과 `keepalive` 설정이 모두 **활성화**된 상태에서  `wrk`부하 생성 툴을 다시 한번 실행 합니다.
 
-    After the 1 minute run of `wrk` load generation tool has finished, you should see a Summary of the statistics.  It should look similar to this:
+    1분 정도 후 `wrk` 부하시험 툴은 종료가 되고 아래의 예시와 같이 시험 결과 요약을 출력 합니다.
 
     ```bash
     ##Sample output##
@@ -912,13 +913,13 @@ Different backend applications may benefit from using different load balancing t
     Transfer/sec:      7.89MB
     ```
 
-    >>Wow, more that **DOUBLE the performance**, with Upstream `keepalive` enabled - over 5,000 HTTP Reqs/second.  Did you see a performance increase??  Your mileage here will vary of course, depending on what kind of machine you are using for these Docker containers.
+    >>와우!! `keepalive`가 활성화된 업스트림에서 **2배 이상의 성능** 향상된 것을 확인할 수 있습니다.(초당 5,000 이상의 HTTP Request) 물론 이러한 성능은 Docker 컨테이너가 실행되는 호스트 시스템의 종류에 따라 차이는 있을 수 있습니다.
 
-    >Note:  In the next Lab, you will use NGINX Plus, which `does` have detailed Upstream metrics, which you will see in real-time while loadtests are being run.
+    >메모:  다음 실습에서는 부하테스트가 진행되는 동안 실시간으로 자세한 업스트림의 메트릭이 있는 NGINX Plus를 사용 합니다. 
 
-1. In this next lab exercise, you will use the `weighted` algorithm to send more traffic to different backends. 
+1. 이번에 진행할 실습에서는 `weighted`알고리즘을 사용하여 특정 백엔드 서버에 더 많은 트래픽을 전송 합니다.
 
-1. Update your `upstreams.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to modify the `server`entries to set an administrative ratio, as follows:
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더의 `upstreams.conf`파일을 아래의 내용과 같이 업데이트하여 비율 기반으로 동작하도록 설정 합니다. 
 
     ```nginx
     ...snip
@@ -940,25 +941,24 @@ Different backend applications may benefit from using different load balancing t
 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용이 업데이트되고 저장되면 Docer Exec로 nginx-oss 컨테이너로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1.  `nginx -t` 및 `nginx -s reload` 명령으로 업데이트된 설정에 대한 검증 및 NGINX를 다시 로드 합니다.
 
-1. Test again with curl and your browser, you should see a response distribution similar to the server weights. 10% to web1, 30% to web2, and 60% to web3.
+1. curl 및 브라우저로 다시 테스트하면서 서버 가중치와 유사한 서버의 부하 분포를 확인할 수 있습니다.(10% 웹1, 30% 웹2, 60% 웹3)
 
-1. For a fun test, hit it again with `wrk`...what do you observe?  Do admin weights help or hurt performance?  
+1. 재미있는 테스트를 위해 `wrk` 툴을 다시 실행하십시오. 관리자의 가중치 설정이 성능에 도움이 되나요? 아니면 오히려 문제가 되나요?
 
     ![Docker Dashboard](media/lab4_docker-perf-weighted.png)
 
-    Only the results will tell you for sure, checking the Docker Desktop Dashboard - looks like the CPU ratio on the web containers matches the `weight` values for the Upstreams.
+    Docker Desktop Dashboard를 확인하면 웹 컨테이너의 CPU 점유율이 업스트림의 `weight` 설정 값과 일치하는 것이 보입니다.
 
-    So that is not too bad for a single CPU docker container.  But didn't you hear that NGINX performance improves with the number of CPUs in the machine?
 
-1. Check your `nginx.conf` file within `labs\lab4\nginx-oss` folder... does it say `worker_processes   1;` near the top?  Hmmm, NGINX is configured to use only one Worker and therefore only one CPU core.  You will change it to `FOUR`, and re-test.  Assuming you have at least 4 cores that Docker and NGINX can use:
+1. `labs\lab4\nginx-oss` 폴더의 `nginx.conf`의 내용을 한번 살펴보시면 현재 NGINX는 `worker_processes   1;`와 같이 단일 워커 프로세스만 사용하도록 설정되어 있는데 이를 4로 변경(만약 호스트 머신의 CPU가 4개로 가정) 후 다시 한번 부하 테스트를 수행 합니다.
 
     ```nginx
     user  nginx;
@@ -976,25 +976,25 @@ Different backend applications may benefit from using different load balancing t
 
     ```
 
-    **NOTE:**  The NGINX default setting for `worker_processes` is `auto`, which means one Worker for every CPU core in the machine.  However, some Virtualization platforms, and Docker will often set this value to 1, something to be aware of and check.
+    **메모:**  NGINX의 워커프로세스(`worker_processes`)의 기본 설정은 `worker_processes``auto`이며, 시스템의 모든 CPU 코어에 대해 각각 하나의 worker_process를 의미 합니다. 그러나 일부 가상화 플랫폼 및 도커는 이 값을 1로 설정하는 경우가 많으므로 이를 알고 확인읗 해야 합니다.
 
-1. Save the `nginx.conf` file with above changes.
+1. 위의 변경사항을 `nginx.conf`에 업데이트 후 저장 합니다.
 
-1. Also update your `upstreams.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to remove the `server weight=x` parameter from all three servers, and set the load balancing algorithm back to `least_conn`.  
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더 내 `upstreams.conf` 파일을 업데이트하여 3대의 서버 모두에서 `server weight=x` 매개변수를 제거하고 부하분산 알고리즘을 다시 `least_conn`으로 설정 합니다.   
 
-1. Once the both the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 위 2개의 파일을 모두 업데이트 후 저장하면 Docker Exec를 통해 nginx-oss로 접속 합니다.
 
-   (**NOTE:** nginx.conf file is also volume mounted to the container so all local changes should reflect in your container)
+   (**메모:** nginx.conf파일 또한 로컬 볼륨으로 마운트가 되어 있기 때문에 로컬 파일을 수정해도 동일하게 컨테이너 내 NGINX 설정이 변경됩니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload` 명령으로 변경된 내용에 대한 검증 및 NGINX를 다시 로드 합니다.
 
-1. You should now have `4 workers`, `least_conn` and `keepalive` **enabled**.  Run the WRK test again. You are going to CRANK IT UP!
+1. 위 설정으로 NGINX는 `4 workers`와 `least_conn` 설정 그리고 `keepalive` **enabled**된 상태 입니다. WRK 부하테스트 툴을 다시 실행하여 결과를 확인 합니다.
 
-    Within the `nginx-oss` container, run `top` to see the NGINX Workers at work.  Should look something like this:
+    `nginx-oss`컨테이너에서 `top`명령을 실행하면 NGINX worker 프로세스를 확인할 수 있습니다.
 
     ```bash
     top
@@ -1016,13 +1016,13 @@ Different backend applications may benefit from using different load balancing t
 
     ```
 
-1. Run the `wrk` load generator again for 1 minute.
+1. 1분 동안 `wrk`부하를 생성 합니다.
 
    ```bash
    docker run --name wrk --network=lab4_default --rm williamyeh/wrk -t4 -c200 -d1m -H 'Host: cafe.example.com' --timeout 2s http://nginx-oss/coffee
    ```
 
-   After the 1 minute run of `wrk` load generation tool has finished, you should see a Summary of the statistics.  It should look similar to this:
+   1분 실행이 완료되면 `wrk`의 통계 요약이 표시 되먀, 아래의 결과 예시와 유사한 내용을 확인할 수 있습니다.
 
     ```bash
     ##Sample output##
@@ -1036,25 +1036,23 @@ Different backend applications may benefit from using different load balancing t
     Transfer/sec:     13.49MB
     ```
 
-    Over 8,000 Requests/Second from a little Docker container...not too shabby!  
-
-    Was your Docker Desktop was humming along, with the fan on full blast?!
+    이 작은 도커 컨테이너에서 초당 8,000 이상의 요청을 처리한 것을 확인할 수 있습니디.  
 
     ![Docker Dashboard](media/lab4_docker-perf-4core.png)
 
-    Summary:  NGINX can and will use whatever hardware resources you provide.  And as you can see, you were shown just a few settings, but there are **MANY** NGINX configuration parameters that affect performance.  Only time, experience, and rigorous testing will determine which NGINX Directives and values will work best for Load Balancing your application.
+    요약:  NGINX는 사용자가 제공하는 모든 하드웨어 리소스를 사용할 수 있습니다. 보시다시피 몇 가지 설정만 표시되었지만 성능에 영향을 미치는 많은 NGINX 구성 매개변수가 있습니다. 시간, 경험 및 엄격한 테스트를 통해서만 애플리케이션의 부하분산에 가장 적합한 NGINX 지시문 및 값을 결정할 수 있습니다.
 
 <br/>
 
-### NGINX Persistence / Affinity
+### NGINX Persistence
 
 <br/>
 
-With many legacy applications, the HTTP client and server must create a temporal unique relationship for the duration of the transaction or communication session.  However, when proxies or load balancers are inserted in the middle of the communication, it is important to retain this affinity between the client and the server. The Load Balancer industry commonly refers to this concept as `Persistence`, or `Sticky`, or `Affinity`, depending on which term the vendor has chosen to use.
+많은 레거시 애플리케이션에서 HTTP 클라이언트 및 서버는 트랜잭션 또는 통신 시간 동안 임시 고유 관계를 만들고 유지해야 합니다. 하지만 중간에 프록시 또는  로드밸런서가 삽입되는 경우 클라이언트와 서버 간에 이러한 관계(세션)을 유지하는 것이 중요 합니다. 로드밸런서 업계에서는 일반적으로 공급업체가 사용하기로 선택한 용어에 따라 이 개념을 `Persistence`, 또는 `Sticky`, 또는 `Affinity`라고 합니다. 
 
-With NGINX, there are several configuration options for this, but in this next lab exercise, you will use the most common option called `ip hash`.  This will allow NGINX to send requests to the same backend based on the client's IP Address.
+NGINX는 이를 위한 몇 가지 구성 옵션이 있지만 이번 실습에서는 가장 일반적인 옵션인 `ip hash`를 사용하여 기능을 제공 합니다. 이 옵션을 사용하면 NGINX는 클라이언트의 IP 주소를 기반으로 동일한 백엔드에 요청을 보낼 수 있습니다. 
 
-1. Update your `upstreams.conf` file within your mounted folder (`labs/lab4/nginx-oss/etc/nginx/conf.d`) to include IP Hash persistance, as follows:
+1. `labs/lab4/nginx-oss/etc/nginx/conf.d` 폴더 내 `upstream.conf` 파일을 아래와 같이 업데이트하여 IP HASH 지속성을 설정 합니다. 
 
     ```nginx
     # NGINX Basics, OSS Proxy to three upstream NGINX web servers
@@ -1087,15 +1085,15 @@ With NGINX, there are several configuration options for this, but in this next l
 
     ```
 
-1. Once the content of the file has been updated and saved, Docker Exec into the nginx-oss container.
+1. 파일의 내용이 업데이트되고 저장되면 Docker Exec로 nginx-oss 컨테이너로 접속 합니다.
 
    ```bash
     docker exec -it nginx-oss bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. `nginx -t` 및 `nginx -s reload` 명령을 통해 설정된 내용에 대한 검증 및 NGINX를 다시 로드 합니다.
 
-1. Test out `ip_hash` persistence with curl and your browser.  You should find that now NGINX will always send your request to the same backend, it will no longer round-robin or least-conn load balance your requests to all three backends.
+1. curl 명령 및 브라우저를 통해서 `ip_hash` 지속성을 테스트 합니다. 이제 NGINX는 동일한 클라이언트의 IP에 대해서 항상 동일한 백엔드로 요청을 보내며 더 이상 "Round Robin" 또는 "Least Connection" 등과 같이 3대의 백엔즈 서버로 부하분산을 수행하지 않습니다.
 
     ```bash
     # Run curl from outside of container
@@ -1103,23 +1101,23 @@ With NGINX, there are several configuration options for this, but in this next l
 
     ```
 
-1. Try the `wrk` load generation tool again, with the IP Hash enabled, you can only use ONE backend server:
+1. `wrk` 툴을 다시 실행하여 결과를 확인해보면 오직 1대의 백엔드 서버로만 트래픽이 전달되는 것을 확인할 수 있습니다.
 
-    Looks like web3 is the chosen one:
+    아래의 결과와 같이 Web3으로만 트래픽이 전달됨:
 
     ![Docker Dashboard](media/lab4_docker-perf-iphash.png)
 
-    After testing, you might considering adding `least_conn` and removing `ip_hash` for future exercises.
+    다음의 실습을 위해 `ip_hash`를 제거하고 `least_conn`으로 설정을 변경 합니다.
 
 <br/>
 
-If you need to find the `answers` to the lab exercises, you will find the final NGINX configuration files for all the exercises in the `labs/lab4/final` folder.  Use them for reference to compare how you completed the labs.
+`labs/lab4/final` 폴더에 각각의 Lab별 최종 결과에 대한 구성 파일을 확인할 수 있습닏. 각자의 랩을 완료 후 비교하기 위한 참조용으로 사용하시기 바랍니다 ^^;
 
->**Congratulations, you are now a member of Team NGINX !**
+>**축하합니다!!, 이제 여러분은 NGINX team의 맴버가 되셨습니다^^!**
 
 ![NGINX Logo](media/nginx-logo.png)
 
->If you are finished with this lab, you can use Docker Compose to shut down your test environment. Make sure you are in the `lab4` folder:
+>여기까지 실습을 완료하신 분들은 `lab4` 폴더에서 docker-compose를 통해 테스트 환경을 종료할 수 있습니다.
 
 ```bash
 cd lab4
@@ -1137,11 +1135,11 @@ Network lab4_default         Removed
 
 ```
 
-**This completes Lab4.**
+**Lab4를 잘 마무리 하셨습니다.**
 
 <br/>
 
-## References:
+## 참고링크:
 
 - [NGINX OSS](https://nginx.org/en/docs/)
 - [NGINX Status Module](http://nginx.org/en/docs/http/ngx_http_stub_status_module.html)
@@ -1156,7 +1154,7 @@ Network lab4_default         Removed
 
 <br/>
 
-### Authors
+### 저자
 
 - Chris Akker - Solutions Architect - Community and Alliances @ F5, Inc.
 - Shouvik Dutta - Solutions Architect - Community and Alliances @ F5, Inc.
