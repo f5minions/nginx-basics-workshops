@@ -1,24 +1,31 @@
-# Monitoring NGINX Plus with Prometheus and Grafana
+# Prometheus와 Grafana를 이용한 NGINX+ 모니터링
 
-## Introduction
+## 소개
 
-In this lab, you will be exploring the integration between NGINX Plus, Prometheus and Grafana.
+이번 랩에서는 최근 많이 사용하는 오픈소스 모니터링 솔루션인 Prometheus 및 Grafa를 활용해서 NGINX+(NGINX OSS도 해당) 모니터링을 실습 합니다.  
 
-This Solution requires the use of the NGINX provided Javascript and Prometheus modules to collect metrics from the NGINX Plus API, and export those metrics as an HTTP html/text page, commonly called the `scaper page` because it scrapes statistics for publication.  The metrics on this export page are then read and imported into Prometheus and Grafana's time-series database.  Once these metrics are in the database, you can create many different Dashboards, Thresholds, Alerts, and other types of graphs for Visualization and Reporting.  As you can imagine, there are literally hundreds of Grafana dashboards written by users of NGINX that you can try out for free.  Grafana also allows you to create and edit your own Dashboards.
 
-NGINX Plus | Prometheus | Grafana
+이 솔루션을 사용하려면 NGINX+에서 제공하는 Javascript 및 Prometheus 모듈을 사용하여 NGINX+ API를 통해 메트릭 정보를 수집하고 해당 메트릭을 게시용 통계를 스크랩하기 때문에 일반적으로 `scaper page`(스케이퍼 페이지)로 명시되는 HTTP html/text 페이지로 내보내야 합니다.
+
+
+그런 다음 이 내보내기 페이지의 메트릭을 읽고 Prometheus 및 Grafana의 시계열 데이터베이스로 가져옵니다. 이러한 지표가 데이터베이스에 있으면 시각화 및 보고를 위한 다양한 대시보드, 임계값, 경고 및 기타 유형의 그래프를 생성할 수 있습니다.
+
+
+이미 잘 알고 있겠지만 NGINX에는 사용자가 생성하고 무료로 사용해 볼 수 있는 수백 개의 Grafana 대시보드가 있습니다. Grafana를 사용하면 자신만의 대시보드를 만들고 편집할 수 있습니다.
+
+NGINX+ | Prometheus | Grafana
 :-------------------------:|:-------------------------:|:-----:
 ![NGINX Plus](media/nginx-plus-icon.png)  |![Prom](media/prometheus-icon.png) |![Grafana](media/grafana-icon.png)
   
-## Learning Objectives
+## 학습목표
 
-By the end of the lab you will be able to:
+실습을 마치면 다음을 수행할 수 있습니다.
 
-- Enable and configure NGINX Java Script
-- Create Prometheus Exporter configuration
-- Test the Prometheus Server
-- Test the Grafana Server
-- View Grafana Dashboard
+- NGINX Java Script 활성화 및 설정
+- Prometheus 내보내기 설정
+- Prometheus 서버 사용
+- Grafana 서버 사용
+- Grafana 대시보드의 보기 및 활용
 
 ## Pre-Requisites
 
