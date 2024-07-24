@@ -76,7 +76,7 @@ Dockerfile의 일부로 NGINX+ 컨테이너에는 빌드 프로세스 중 NGINX 
 
     ```
 
-1. Inspect the `prometheus.conf` file in the `labs/lab6/nginx-plus/etc/nginx/conf.d` folder.  This is the NGINX config file which opens up port 9113, and provides access to the scraper page.  Uncomment all the lines to enable this.
+1. `labs/lab6/nginx-plus/etc/nginx/conf.d/` 폴더에서 `prometheus.conf` 파일을 확인 합니다. 설정을 보면 NGINX는 9113 포트를 열고 스크래퍼 페이지에 대한 엑세스를 제공하는 설정입니다. 활성화하기 위해 모든 행의 주석처리를 제거 하세요.
 
     ```nginx
     # NGINX Plus Prometheus configuration, for HTTP scraper page
@@ -103,36 +103,36 @@ Dockerfile의 일부로 NGINX+ 컨테이너에는 빌드 프로세스 중 NGINX 
 
     ```
 
-1. Once the contents of both files has been updated and saved, Docker Exec into the nginx-plus container.
+1. 두 파일의 내용을 모두 업데이트 후 저장하면 Docker Exec를 통해 NGINX+ 컨테이너에 접속을 합니다.
 
     ```bash
      docker exec -it nginx-plus bin/bash
     ```
 
-1. Test and reload your NGINX config by running `nginx -t` and `nginx -s reload` commands respectively from within the container.
+1. 접속한 NGINX+ 컨테이너 내에서 `nginx -t` 명령과 `nginx -s reload` 명령을 수행하여 NGINX의 설정을 검사하고 업데이트 합니다.
 
-1. Start the WRK load generation tool.  This will provide some traffic to the nginx-plus container, so the statistics will be increasing.
+1. Docker로 실행되는 WRK라는 부하생성툴을 시작합니다. 이 툴을 통해 NGINX+로 트래픽을 발생하고 통계 정보의 업데이트가 발생할 것 입니다.
 
     ```bash
     docker run --name wrk --network=lab6_default --rm williamyeh/wrk -t4 -c200 -d20m -H 'Host: cafe.example.com' --timeout 2s http://nginx-plus/coffee
     ```
 
-1. Test the Prometheus scraper page.  Open your browser to <http://localhost:9113/metrics>.  You should see an html/text page like this one.  You will notice there are MANY statistcs available, this page is like a text version of the NGINX Plus dashboard. This page can be easily imported into your existing Performance Management and Monitoring tools.  You will see how to do this in the next section with Prometheus and Grafana.
+1. 브라우저를 열고 <http://localhost:9113/metrics> 주소를 입력하여 NGINX의 prometheus 스크래퍼 페이지를 확인합니다. 아래와 같이 html/text 페이지가 보일 것 입니다. 사용 가능한 통계가 많이 있다는 것을 확인할 수 있으며, 이 페이지는 NGINX+ 대시보드의 텍스트 버전과 동일합니다. 이 페이지는 기존 성능 관리 및 모니터링 도구로 쉽게 가져올 수 있습니다. prometheus 및 grafana를 사용하여 다음 섹션에서 이 작업을 수행하는 방법을 살펴보겠습니다.
 
-    Click refresh a couple times, and some of the metrics should increment.
+    몇번 새로고침 버튼을 클릭하면 메트릭 정보가 업데이트(증가)되는 것을 확인할 수 있습니다.
 
     ![Scraper page](media/lab6_scraper_page1.png)
 
 <br/>
 
-## Prometheus and Grafana Server Docker containers
+## Prometheus 및 Grafana 서버 Docker 컨테이너
 
 <br/>
 
 ![prometheus](media/prometheus-icon.png)  |![grafana](media/grafana-icon.png)
 --- | ---
 
-1. Inspect your `docker-compose.yml` file, you will see it includes 2 additional Docker containers for this lab, one for a Prometheus server, and one for a Grafana server.  These have been configured to run for you, but the images will be pulled from public repos.
+1. `docker-compose.yml` 파일을 살펴보면 이 실습을 위한 2개의 추가 Docker 컨테이너가 포함되어 있는 것을 확인할 수 있습니다. 하나는 prometheus 서버용이고 다른 하나는 grafana 서버용 입니다. 이는 자동으로 실행되도록 구성되어 있지만 이미지 는 공개 저장소에서 가져 옵니다(인터넷 연결이 필요, 로컬 리포지토리가 있다면 로컬 리포지토리에 이미지 업로드 후 인터넷의 연결없이 사용할 수도 있습니다).
 
     ```bash
     ...snip
@@ -166,7 +166,7 @@ Dockerfile의 일부로 NGINX+ 컨테이너에는 빌드 프로세스 중 NGINX 
 
     ```
 
-1. Verify these 2 containers are running.
+1. 실행 후 2개의 컨테이너가 동작 중인지 확인하세요.
 
     ```bash
     docker ps -a
@@ -184,47 +184,49 @@ Dockerfile의 일부로 NGINX+ 컨테이너에는 빌드 프로세스 중 NGINX 
 
 <br/>
 
-### Prometheus
+### Prometheus(프로메테우스)
 
 <br/>
 
-Prometheus is a software package that can watch and collect statistics from many different NGINX instances. The Prometheus server will collect the statistics from the scraper page that you enabled in the previous section.
+프로메테우스는 다양한 NGINX 인스턴스에서 통계를 보고 수집할 수 있는 소프트웨어 패키지 입니다. 프로메테우스 서버는 이전 섹션에서 활성화한 스크래퍼 페이지에서 통계를 수집합니다.
 
 <br/>
 
-1. Using Chrome, navigate to <http://localhost:9090>. You should see a Prometheus webpage like this one. Search for `nginxplus_` in the query box to see a list of all the statistics that Prometheus is collecting for you.  Select `nginxplus_http_requests_total` from the list, click on Graph, and then click the "Execute" Button.  Change the Time window if needed. This will provide a graph similar to this one:
+1. 크롬브라우저를 사용하여 <http://localhost:9090>로 이동합니다. 아래와 같은 프로메테우스 웹페이지가 표시됩니다. 프로메테우스가 수집하는 모든 통계 목록을 보려면 쿼리 상자에서 `nginxplus_`를 검색하세요. 목록에서 `nginxplus_http_requests_total`을 선택하고 그래프를 클릭한 후 "실행" 버튼을 클릭합니다. 필요한 경우 시간 창을 변경하면서 확인할 수 있습니다. 그러면 다음과 같은 유사란 그래프가 제공됩니다.
 
     ![Prom Graph](media/lab6_prometheus-graph.png)
 
-    Take a few minutes to explore other metrics available from NGINX Plus.  What is the Upstream Response Time of your 3 backend web servers???
+    잠시 시간을 내어 NGINX+에서 제공하는 다른 메트릭 항목도 함께 살펴보세요. 3개의 백엔드 웹 서버의 업스트림 응답 시간은 얼마로 보이시나요???
 
 <br/>
 
-### Grafana
+### Grafana(그라파나)
 
 <br/>
 
-Grafana is a data visualization tool, which contains a time series database and graphical web presentation tools. Grafana imports the Prometheus scraper page statistics into it's database, and allows you to create Dashboards of the statistics that are important to you.
+Grafana는 시계열 데이터베이스와 그래픽 웹 프리젠테이션 도구가 포함된 시각화 도구 입니다. Grafana는 Prometheus 스크래퍼 페이지 통계를 데이터베이스로 가져오고 중요한 통계의 대시보드를 생성할 수 있습니다.
 
-1. Log into the Web console access for Grafana at <http://localhost:3000>.  The default Login should be user/pass of `admin/admin`.  This will present the main Grafana page.
+1. <http://localhost:3000>에서 Grafana 웹 콘솔 엑세스에 로그인 합니다. 기본 로그인은 `admin/admin` 입니다. 정상적으로 로그인 후 기본 Gragana 페이지가 제공됩니다.
 
-1. Create a Prometheus Data Source.  In the middle of the Grafana Welcome page, click on `Add Data Source`, and Select the Prometheus icon.
+1. Prometheus 데이터 소스를 생성 합니다. Grafana Welcome 페이지 중간에 `Add Data Source`를 클릭하고 Prometheus 아이콘을 선택 합니다.
 
-1. Set the Connection URL to `http://prometheus:9090` as shown:
+1. 다음과 같이 연결 URL을 `http://prometheus:9090`으로 설정 합니다.
 
     ![Prom Datasource](media/lab6_prometheus-datasource.png)
 
-1. Scroll to the bottom and click `Save and Test`. You should see a green `Successfully queried the Prometheus API` message.
+1. 맨 아래로 스크롤하여 `Save and Test`를 클릭합니다. 녹색 `Successfully queried the Prometheus API` 메세지가 표시됩니다.
 
-1. Import the provided `labs/lab6/NGINX-Basics.json` file to see statistics like the NGINX Plus HTTP Requests Per Second and Upstream Response Times.  Click on Create New Dashboard from Home page and then Import.  Copy and Paste the `labs/lab6/NGINX-Basics.json` file provided. Click on the `Load` button. Set the data source to `prometheus` and then click on the `Import` button. You should see a dashboard like this one:
+1. `labs/lab6/NGINX-Basics.json`파일을 가져와 NGINX+ 초당 HTTP 요청 및 업스트림 응답 시간과 같은 통계를 확인하세요. 홈페이지에서 새 대시보드 만들기를 클릭한 다음 가져오기를 클릭 합니다. 제공된 `labs/lab6/NGINX-Basics.json` 파일을 복사하여 붙여 넣습니다. `Load` 버튼을 클릭 합니다. 
+
+그리고 데이터 소스를 `prometheus`로 설정한 후 `Import` 버튼을 클릭하면 다음과 같은 대시보드가 표시 됩니다.
 
     ![Grafana Dashboard](media/lab6_grafana-dashboard.png)
 
-    There are many different Grafana Dashboards available, and you have the option to create and build dashboards to suite your needs.  NGINX Plus provides over 240 metrics for TCP, HTTP, SSL, Virtual Servers, Locations, Rate Limits, and Upstreams.
+    다양한 Grafana 대시보드를 사용할 수 있으며 필요에 맞게 대시보드를 생성하고 구축할 수 있는 옵션이 있습니다. NGINX+는 TCP, HTTP, SSL, 가상 서버(Virtual Server), 위치(Location), 속도 제한(Rate Limit) 및 업스트림에 대한 240개 이상의 메트릭 정보를 제공합니다.
 
-> If `wrk` load generation tool is still running, then you can stop it by pressing `ctrl + c`.
+> 만약 `wrk` 부하생성 툴이 아직도 실행 중이라면 `ctrl + c`를 입력하여 중단합니다. 
 
->If you are finished with this lab, you can use Docker Compose to shut down your test environment. Make sure you are in the `lab6` folder:
+>이 랩을 모두 종료하셨다면 아래와 같은 docker compose 명령으로 랩으로 구성한 Docker 컨테이너들을 모두 종료 할 수 있습니다. 단, Docker Compose 명령을 실행할 때 현재 lab6 폴더에 위치라고 있는가를 확인하세요.
 
 ```bash
 cd lab6
@@ -246,11 +248,11 @@ Network lab6_default         Removed
 
 <br/>
 
-**This completes Lab6.**
+**여기까지 완료하셨다면 Lab6을 모두 완료하셨습니다**
 
 <br/>
 
-## References:
+## 참고자료:
 
 - [NGINX Plus](https://www.nginx.com/products/nginx/)
 - [NGINX Admin Guide](https://docs.nginx.com/nginx/admin-guide/)
@@ -259,10 +261,14 @@ Network lab6_default         Removed
 
 <br/>
 
-### Authors
+### 저자
 
 - Chris Akker - Solutions Architect - Community and Alliances @ F5, Inc.
 - Shouvik Dutta - Solutions Architect - Community and Alliances @ F5, Inc.
+
+### 한글화
+
+- 김재홍 -  Sr Solutions Engineer - Modern App Specialist @ F5, Inc.
 
 -------------
 
