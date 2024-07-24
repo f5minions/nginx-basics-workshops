@@ -27,31 +27,33 @@ NGINX+ | Prometheus | Grafana
 - Grafana 서버 사용
 - Grafana 대시보드의 보기 및 활용
 
-## Pre-Requisites
+## 사전 요구사항
 
-- You must have Docker installed and running
-- You must have Docker-compose installed
-- You must an NGINX Plus license, Trial or subscription
-- See `Lab0` for instructions on setting up your system for this Workshop
-- Familiarity with basic Linux commands and commandline tools
-- Familiarity with basic Docker concepts and commands
-- Familiarity with basic HTTP protocol
-- Familiarity with Prometheus
-- Familiartiy with Grafana
+- 서버(랩용)에 Docker가 설치되고 실행 중이어 합니다.
+- Docker-compose가 설치되어 있어야 합니다.
+- NGINX+ 라이선스 또는 평가판/구독이 필요 합니다.
+- 이 워크샵을 위한 시스템 설정 지침은 `Lab0`을 참조하세요. 
+- 기본 Linux 명령 및 명령줄 도구에 대한 이해가 필요합니다.
+- Docker의 기본 개념과 명령어에 대한 이해가 필요합니다.
+- 기본적인 HTTP 프로토콜에 대한 이해가 필요합니다.
+- Prometheus에 대한 기본 지식이 필요합니다.
+- Grafana에 대한 기본 지식이 필요합니다.
 
 As part of your Dockerfile, your NGINX Plus container already has the added `NGINX Java Script and NGINX Prometheus dynamic module` installed during the build process.  Refer to the Dockerfile if you want to check it out.
 
-1. Ensure you are in the `lab6` folder.  Using a Terminal, run Docker Compose to build and run all the containers.
+Dockerfile의 일부로 NGINX+ 컨테이너에는 빌드 프로세스 중 NGINX Java Script 및 NGINX Prometheus 동적 모듈이 이미 추가되어 있기 때문에 확인이 필요하시면 Dockerfile의 내용을 참조하세요.
+
+1. `lab6`폴더에서 시작을 할 수 있기 때문에 현재 디렉토리가 `lab6`에 있는지 확인하세요. 터미널을 사용하여 Docker Compose를 실행하여 모든 컨테이너를 빌드하고 실행 합니다. 
 
     ```bash
      cd lab6
      docker compose up --force-recreate -d
     ```
 
-1. Edit your `nginx.conf` file, you will make 2 changes.
+1. `nginx.conf`파일에서 아래와 같이 2개의 주석으로 처리된 내용을 주석제거를 통해 활성화 합니다.
 
-    - Uncomment Line #8 to enable the `ngx_http_js_module` module.
-    - Uncomment Line #37 to set a parameter for an NGINX buffer called `subrequest_output_buffer_size`.
+    - `ngx_http_js_module` 활성화를 위해 라인 #8의 주석을 제거 합니다.
+    - #37라인의 주석을 제거하여 `subrequest_output_buffer_size` 라는 내용의 NGINX 버퍼 파라메터를 활성화 합니다.
 
     ```nginx
     ...snip
